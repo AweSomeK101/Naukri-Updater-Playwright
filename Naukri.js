@@ -10,9 +10,17 @@ async function login(page) {
   console.log("Logging in...");
   await page.getByRole("button", { name: "Login", exact: true }).click();
 
-  await page.waitForTimeout(15000);
+  await page.waitForTimeout(10000);
   await page.waitForURL("**/mnjuser/homepage", { timeout: 30000, waitUntil: "load" });
   console.log("Logged in!", page.url());
+}
+
+async function logout(page) {
+  console.log("Logging out...");
+  await page.locator(".nI-gNb-drawer__icon").click();
+  await page.getByTitle("Logout", { exact: true }).click();
+  await page.waitForTimeout(2000);
+  console.log("Bye!");
 }
 
 async function changeSalary(page) {
@@ -30,7 +38,7 @@ async function changeSalary(page) {
   await salaryInput.pressSequentially(salary.toString(), { delay: 350 });
   console.log("New salary:", salary);
 
-  console.log("Saving...");
+  console.log("Updating salary...");
   await Promise.all([
     page.route("**/users/self/fullprofiles", (route, request) => {
       let postData = request.postDataJSON();
@@ -44,6 +52,7 @@ async function changeSalary(page) {
       return document.getElementById("saveBasicDetailsBtn").click();
     }),
   ]);
+  console.log("Updated Salary!");
 }
 
-module.exports = { login, changeSalary };
+module.exports = { login, logout, changeSalary };
