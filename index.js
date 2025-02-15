@@ -2,6 +2,7 @@ const { firefox } = require("playwright");
 const random_useragent = require("random-useragent");
 require("dotenv").config();
 const { login, changeSalary, logout } = require("./Naukri");
+const { TIMEOUT } = require("./constants");
 
 const BASE_URL = "https://naukri.com";
 const USER_AGENT = random_useragent.getRandom(function (ua) {
@@ -34,7 +35,14 @@ async function main() {
   console.log("---------Script End----------");
 }
 
-main().catch((error) => {
+async function runWithTimeout(fn, timeoutMs) {
+  const timeout = new Promise((_, reject) =>
+    setTimeout(() => reject(new Error("⏳ Timeout reached! Exiting...")), timeoutMs)
+  );
+  return Promise.race([fn(), timeout]);
+}
+
+runWithTimeout(main, TIMEOUT).catch((error) => {
   console.error("!!ERROR!!", error);
   process.exit(1);
 });
