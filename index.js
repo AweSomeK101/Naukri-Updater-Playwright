@@ -1,7 +1,7 @@
 const { firefox } = require("playwright");
 const random_useragent = require("random-useragent");
 require("dotenv").config();
-const { login } = require("./Naukri");
+const { login, changeSalary } = require("./Naukri");
 
 const BASE_URL = "https://naukri.com";
 const USER_AGENT = random_useragent.getRandom(function (ua) {
@@ -21,9 +21,11 @@ async function main() {
     hasTouch: false,
   });
   const page = await context.newPage();
-  page.setDefaultTimeout(30000);
+  page.setDefaultTimeout(45000);
 
   await login(page);
+
+  await changeSalary(page);
 
   await browser.close();
 
@@ -33,6 +35,6 @@ async function main() {
 try {
   main();
 } catch (error) {
-  console.log(error);
+  console.log("!!ERROR!!", error);
   process.exit(1);
 }
