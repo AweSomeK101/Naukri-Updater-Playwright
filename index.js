@@ -1,18 +1,16 @@
-const { firefox } = require("playwright");
+const playwright = require("playwright");
 const random_useragent = require("random-useragent");
 require("dotenv").config();
 const { login, changeSalary, logout } = require("./Naukri");
-const { TIMEOUT } = require("./constants");
+const { FN_TIMEOUT, PAGE_TIMEOUT, BROWSER } = require("./constants");
 
 const BASE_URL = "https://naukri.com";
-const USER_AGENT = random_useragent.getRandom(function (ua) {
-  return ua.browserName === "Firefox";
-});
+const USER_AGENT = random_useragent.getRandom();
 
 async function main() {
   console.log("---------Script Start----------");
 
-  const browser = await firefox.launch({ headless: true });
+  const browser = await playwright[BROWSER].launch({ headless: true });
   const context = await browser.newContext({
     bypassCSP: true,
     baseURL: BASE_URL,
@@ -22,7 +20,7 @@ async function main() {
     hasTouch: false,
   });
   const page = await context.newPage();
-  page.setDefaultTimeout(30000);
+  page.setDefaultTimeout(PAGE_TIMEOUT);
 
   await login(page);
 
@@ -42,7 +40,7 @@ async function runWithTimeout(fn, timeoutMs) {
   return Promise.race([fn(), timeout]);
 }
 
-runWithTimeout(main, TIMEOUT).catch((error) => {
+runWithTimeout(main, FN_TIMEOUT).catch((error) => {
   console.error("!!ERROR!!", error);
   process.exit(1);
 });
