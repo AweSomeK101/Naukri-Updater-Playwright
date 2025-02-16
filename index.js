@@ -12,7 +12,7 @@ const USER_AGENT = random_useragent.getRandom(function (ua) {
 async function main() {
   console.log("---------Script Start----------");
 
-  const browser = await firefox.launch({ headless: false });
+  const browser = await firefox.launch({ headless: true });
   const context = await browser.newContext({
     bypassCSP: true,
     baseURL: BASE_URL,
